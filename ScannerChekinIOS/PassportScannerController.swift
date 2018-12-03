@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import EVGPUImage2
 import GPUImage //Still using this for the rotate
 import UIImage_Resize
 import AVFoundation

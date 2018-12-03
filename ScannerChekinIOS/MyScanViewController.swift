@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftOCR
 import AVFoundation
 import CoreMotion
 
