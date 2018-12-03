@@ -35,7 +35,7 @@ s.dependency 'UIImage-Resize'
 s.source_files = "ScannerChekinIOS/**/*.{swift}"
 
 # 9
-s.resources = "ScannerChekinIOS/**/*.{png,jpeg,jpg,storyboard,xib,xcassets}"
+s.resources = "ScannerChekinIOS/**/*.{png,jpeg,jpg,storyboard,xib,xcassets,traineddata}"
 
 # 10
 s.swift_version = "4.2"
