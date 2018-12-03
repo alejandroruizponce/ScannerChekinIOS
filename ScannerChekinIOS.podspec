@@ -8,10 +8,10 @@ s.summary = "Private project from Chekin"
 s.requires_arc = true
 
 # 2
-s.version = "0.1.0"
+s.version = "1.0.0"
 
 # 3
-s.license = { :type => "Private and Commercial License", :file => "LICENSE" }
+s.license = { :type => "MIT", :file => "LICENSE" }
 
 # 4 - Replace with your name and e-mail address
 s.author = { "Alejandro Ruiz" => "alejandroruizponce93@gmail.com" }
