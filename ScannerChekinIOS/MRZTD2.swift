@@ -149,116 +149,118 @@ open class MRZTD2: MRZParser {
         documentType = line1.subString(0, to: 0)
         debugLog("Document type : \(documentType)")
         documentSubType = line1.subString(1, to: 1)
-        countryCode = line1.subString(2, to: 4).replace(target: "<", with: " ")
-        debugLog("Country code : \(countryCode)")
-     
-        if countryCode == "FRA"{
-            print("-------------PROCESANDO MRZ TD2 FRANCES -------------")
-            firstName = line1.subString(5, to: 29).replace(target: "<", with: "")
-            debugLog("First name : \(firstName)")
-            passportNumber = line2.subString(0, to: 11)
-            debugLog("IDNumber : \(passportNumber)")
-            let passportNumberCheck = line2.subString(12, to: 12).toNumber()
-            nationality = "FRA"
-            lastName = line2.subString(13, to: 26).replace(target: "<", with: " ")
-            debugLog("Last name : \(lastName)")
-            let birth = line2.subString(27, to: 32).toNumber()
-            dateOfBirth = MRZTD2.dateFromString(birth)
-            debugLog("date of birth : \(dateOfBirth)")
-            let birthValidation = line2.subString(33, to: 33).toNumber()
-            sex = line2.subString(34, to: 34)
-            debugLog("sex : \(sex)")
-            let expiration = ""
-            let dataValidation = line2.subString(35, to: 35).toNumber()
-            let data_line2_a = line2.subString(0, to: 12)
-            let data_line2_b = line2.subString(27, to: 33)
-            let data = "\(data_line2_a)\(data_line2_b)"
+        if (documentType != "P" && documentSubType != "P") {
+            countryCode = line1.subString(2, to: 4).replace(target: "<", with: " ")
+            debugLog("Country code : \(countryCode)")
             
-            _isValid = 1
-            
-            passportNumberIsValid = MRZTD3.validate(passportNumber, check: passportNumberCheck)
-            if !passportNumberIsValid {
-                print("--> IDNumber is invalid")
-            }
-            _isValid = _isValid * (passportNumberIsValid ? 1 : 0.9)
-            
-            dateOfBirthIsValid = MRZTD3.validate(birth, check: birthValidation)
-            if !dateOfBirthIsValid {
-                print("--> DateOfBirth is invalid")
-            }
-            _isValid = _isValid * (dateOfBirthIsValid ? 1 : 0.9)
-            
-            dataIsValid = MRZTD3.validate(data, check: dataValidation)
-            if !dataIsValid {
-                print("--> Date is invalid")
-            }
-            _isValid = _isValid * (dataIsValid ? 1 : 0.9)
-            
-            
-        } else  {
-            var nameArray = line1.components(separatedBy: "<<")
-            firstName = nameArray[0].replace(target: "ID\(countryCode)", with: " ")
-            debugLog("First name : \(firstName)")
-            
-            lastName = nameArray.count > 1 ? nameArray[1].replace(target: "<", with: " ") : ""
-            debugLog("Last name : \(lastName)")
-            
-            if countryCode == "ROU" {
-                passportNumber = line2.subString(0, to: 7)
+            if countryCode == "FRA"{
+                print("-------------PROCESANDO MRZ TD2 FRANCES -------------")
+                firstName = line1.subString(5, to: 29).replace(target: "<", with: "")
+                debugLog("First name : \(firstName)")
+                passportNumber = line2.subString(0, to: 11)
                 debugLog("IDNumber : \(passportNumber)")
-            } else {
-                passportNumber = line2.subString(0, to: 8)
-                debugLog("IDNumber : \(passportNumber)")
-            }
-            let passportNumberCheck = line2.subString(9, to: 9).toNumber()
-            
-            nationality = line2.subString(10, to: 12).replace(target: "<", with: " ")
-            debugLog("Nationality : \(passportNumber)")
-            
-            let birth = line2.subString(13, to: 18).toNumber()
-            dateOfBirth = MRZTD2.dateFromString(birth)
-            debugLog("date of birth : \(dateOfBirth)")
-            let birthValidation = line2.subString(19, to: 19).toNumber()
-            
-            sex = line2.subString(20, to: 20)
-            debugLog("sex : \(sex)")
-            
-            let expiration = line2.subString(21, to: 26).toNumber()
-            expirationDate = MRZTD1.dateFromString(expiration)
-            debugLog("date of expiration : \(expirationDate)")
-            let expirationValidation = line2.subString(27, to: 27).toNumber()
-            
-            let dataValidation = line2.subString(35, to: 35).toNumber()
-            
-            let data_line2_a = line2.subString(0, to: 9)
-            let data_line2_b = line2.subString(10, to: 19)
-            let data_line2_c = line2.subString(20, to: 27)
-            let data = "\(data_line2_a)\(data_line2_b)\(data_line2_c)"
-            
-            _isValid = 1
-            
-            if countryCode != "ROU"{
+                let passportNumberCheck = line2.subString(12, to: 12).toNumber()
+                nationality = "FRA"
+                lastName = line2.subString(13, to: 26).replace(target: "<", with: " ")
+                debugLog("Last name : \(lastName)")
+                let birth = line2.subString(27, to: 32).toNumber()
+                dateOfBirth = MRZTD2.dateFromString(birth)
+                debugLog("date of birth : \(dateOfBirth)")
+                let birthValidation = line2.subString(33, to: 33).toNumber()
+                sex = line2.subString(34, to: 34)
+                debugLog("sex : \(sex)")
+                let expiration = ""
+                let dataValidation = line2.subString(35, to: 35).toNumber()
+                let data_line2_a = line2.subString(0, to: 12)
+                let data_line2_b = line2.subString(27, to: 33)
+                let data = "\(data_line2_a)\(data_line2_b)"
+                
+                _isValid = 1
+                
                 passportNumberIsValid = MRZTD3.validate(passportNumber, check: passportNumberCheck)
                 if !passportNumberIsValid {
                     print("--> IDNumber is invalid")
                 }
                 _isValid = _isValid * (passportNumberIsValid ? 1 : 0.9)
-            
+                
                 dateOfBirthIsValid = MRZTD3.validate(birth, check: birthValidation)
                 if !dateOfBirthIsValid {
                     print("--> DateOfBirth is invalid")
                 }
                 _isValid = _isValid * (dateOfBirthIsValid ? 1 : 0.9)
-            
+                
                 dataIsValid = MRZTD3.validate(data, check: dataValidation)
                 if !dataIsValid {
                     print("--> Date is invalid")
                 }
                 _isValid = _isValid * (dataIsValid ? 1 : 0.9)
+                
+                
+            } else  {
+                print("PROCESANDO TD2 NO FRANCES")
+                var nameArray = line1.components(separatedBy: "<<")
+                firstName = nameArray[0].replace(target: "ID\(countryCode)", with: " ")
+                debugLog("First name : \(firstName)")
+                
+                lastName = nameArray.count > 1 ? nameArray[1].replace(target: "<", with: " ") : ""
+                debugLog("Last name : \(lastName)")
+                
+                if countryCode == "ROU" {
+                    passportNumber = line2.subString(0, to: 7)
+                    debugLog("IDNumber : \(passportNumber)")
+                } else {
+                    passportNumber = line2.subString(0, to: 8)
+                    debugLog("IDNumber : \(passportNumber)")
+                }
+                let passportNumberCheck = line2.subString(9, to: 9).toNumber()
+                
+                nationality = line2.subString(10, to: 12).replace(target: "<", with: " ")
+                debugLog("Nationality : \(passportNumber)")
+                
+                let birth = line2.subString(13, to: 18).toNumber()
+                dateOfBirth = MRZTD2.dateFromString(birth)
+                debugLog("date of birth : \(dateOfBirth)")
+                let birthValidation = line2.subString(19, to: 19).toNumber()
+                
+                sex = line2.subString(20, to: 20)
+                debugLog("sex : \(sex)")
+                
+                let expiration = line2.subString(21, to: 26).toNumber()
+                expirationDate = MRZTD1.dateFromString(expiration)
+                debugLog("date of expiration : \(expirationDate)")
+                let expirationValidation = line2.subString(27, to: 27).toNumber()
+                
+                let dataValidation = line2.subString(35, to: 35).toNumber()
+                
+                let data_line2_a = line2.subString(0, to: 9)
+                let data_line2_b = line2.subString(10, to: 19)
+                let data_line2_c = line2.subString(20, to: 27)
+                let data = "\(data_line2_a)\(data_line2_b)\(data_line2_c)"
+                
+                _isValid = 1
+                
+                if countryCode != "ROU"{
+                    passportNumberIsValid = MRZTD3.validate(passportNumber, check: passportNumberCheck)
+                    if !passportNumberIsValid {
+                        print("--> IDNumber is invalid")
+                    }
+                    _isValid = _isValid * (passportNumberIsValid ? 1 : 0.9)
+                    
+                    dateOfBirthIsValid = MRZTD3.validate(birth, check: birthValidation)
+                    if !dateOfBirthIsValid {
+                        print("--> DateOfBirth is invalid")
+                    }
+                    _isValid = _isValid * (dateOfBirthIsValid ? 1 : 0.9)
+                    
+                    dataIsValid = MRZTD3.validate(data, check: dataValidation)
+                    if !dataIsValid {
+                        print("--> Date is invalid")
+                    }
+                    _isValid = _isValid * (dataIsValid ? 1 : 0.9)
+                }
             }
         }
-
-
+        
         // Final cleaning up
         documentSubType = documentSubType.replace(target: "<", with: "")
         personalNumber = personalNumber.replace(target: "<", with: "")
