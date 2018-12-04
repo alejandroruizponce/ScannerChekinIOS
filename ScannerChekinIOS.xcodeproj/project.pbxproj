@@ -11,15 +11,8 @@
 		5579ECD421B53EEE000AA4BD /* MRZTD3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ECCE21B53EEE000AA4BD /* MRZTD3.swift */; };
 		5579ECD521B53EEE000AA4BD /* MRZTD1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ECCF21B53EEE000AA4BD /* MRZTD1.swift */; };
 		5579ECD621B53EEE000AA4BD /* PassportScannerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ECD021B53EEE000AA4BD /* PassportScannerController.swift */; };
-		5579ECD721B53EEE000AA4BD /* MyScanViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ECD121B53EEE000AA4BD /* MyScanViewController.swift */; };
 		5579ECD821B53EEE000AA4BD /* MRZParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ECD221B53EEE000AA4BD /* MRZParser.swift */; };
 		5579ECD921B53EEE000AA4BD /* MRZTD2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ECD321B53EEE000AA4BD /* MRZTD2.swift */; };
-		5579ED2A21B55D5F000AA4BD /* overlayhorizontal.png in Resources */ = {isa = PBXBuildFile; fileRef = 5579ED2921B55D5F000AA4BD /* overlayhorizontal.png */; };
-		5579ED2C21B55D67000AA4BD /* flashbutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 5579ED2B21B55D67000AA4BD /* flashbutton.png */; };
-		5579ED2E21B55D7F000AA4BD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5579ED2D21B55D7F000AA4BD /* ViewController.swift */; };
-		5579ED3021B55D8D000AA4BD /* tessdata in Resources */ = {isa = PBXBuildFile; fileRef = 5579ED2F21B55D8D000AA4BD /* tessdata */; };
-		5579ED3421B55EFE000AA4BD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5579ED3321B55EFE000AA4BD /* Main.storyboard */; };
-		5579ED3821B55F97000AA4BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5579ED3721B55F97000AA4BD /* Assets.xcassets */; };
 		89787756F9AD310BCE0DDCA7 /* Pods_ScannerChekinIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 551AADE616EACE0DAF085591 /* Pods_ScannerChekinIOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,15 +36,8 @@
 		5579ECCE21B53EEE000AA4BD /* MRZTD3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZTD3.swift; sourceTree = "<group>"; };
 		5579ECCF21B53EEE000AA4BD /* MRZTD1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZTD1.swift; sourceTree = "<group>"; };
 		5579ECD021B53EEE000AA4BD /* PassportScannerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassportScannerController.swift; sourceTree = "<group>"; };
-		5579ECD121B53EEE000AA4BD /* MyScanViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyScanViewController.swift; sourceTree = "<group>"; };
 		5579ECD221B53EEE000AA4BD /* MRZParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZParser.swift; sourceTree = "<group>"; };
 		5579ECD321B53EEE000AA4BD /* MRZTD2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MRZTD2.swift; sourceTree = "<group>"; };
-		5579ED2921B55D5F000AA4BD /* overlayhorizontal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = overlayhorizontal.png; sourceTree = "<group>"; };
-		5579ED2B21B55D67000AA4BD /* flashbutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flashbutton.png; sourceTree = "<group>"; };
-		5579ED2D21B55D7F000AA4BD /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		5579ED2F21B55D8D000AA4BD /* tessdata */ = {isa = PBXFileReference; lastKnownFileType = folder; path = tessdata; sourceTree = "<group>"; };
-		5579ED3321B55EFE000AA4BD /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
-		5579ED3721B55F97000AA4BD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72D3675A0BA9EED2E2E0D537 /* Pods-ScannerChekinIOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScannerChekinIOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-ScannerChekinIOS/Pods-ScannerChekinIOS.release.xcconfig"; sourceTree = "<group>"; };
 		D576D3A775B24B23C81585D3 /* Pods-ScannerChekinIOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ScannerChekinIOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ScannerChekinIOS/Pods-ScannerChekinIOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,18 +75,11 @@
 		5579ECC521B53947000AA4BD /* ScannerChekinIOS */ = {
 			isa = PBXGroup;
 			children = (
-				5579ED2F21B55D8D000AA4BD /* tessdata */,
 				5579ECD221B53EEE000AA4BD /* MRZParser.swift */,
-				5579ED2D21B55D7F000AA4BD /* ViewController.swift */,
 				5579ECCF21B53EEE000AA4BD /* MRZTD1.swift */,
 				5579ECD321B53EEE000AA4BD /* MRZTD2.swift */,
 				5579ECCE21B53EEE000AA4BD /* MRZTD3.swift */,
-				5579ED3321B55EFE000AA4BD /* Main.storyboard */,
-				5579ECD121B53EEE000AA4BD /* MyScanViewController.swift */,
 				5579ECD021B53EEE000AA4BD /* PassportScannerController.swift */,
-				5579ED3721B55F97000AA4BD /* Assets.xcassets */,
-				5579ED2B21B55D67000AA4BD /* flashbutton.png */,
-				5579ED2921B55D5F000AA4BD /* overlayhorizontal.png */,
 				5579ECC621B53947000AA4BD /* ScannerChekinIOS.h */,
 				5579ECC721B53947000AA4BD /* Info.plist */,
 			);
@@ -195,11 +174,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5579ED2A21B55D5F000AA4BD /* overlayhorizontal.png in Resources */,
-				5579ED3021B55D8D000AA4BD /* tessdata in Resources */,
-				5579ED2C21B55D67000AA4BD /* flashbutton.png in Resources */,
-				5579ED3821B55F97000AA4BD /* Assets.xcassets in Resources */,
-				5579ED3421B55EFE000AA4BD /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,9 +209,7 @@
 				5579ECD821B53EEE000AA4BD /* MRZParser.swift in Sources */,
 				5579ECD521B53EEE000AA4BD /* MRZTD1.swift in Sources */,
 				5579ECD621B53EEE000AA4BD /* PassportScannerController.swift in Sources */,
-				5579ED2E21B55D7F000AA4BD /* ViewController.swift in Sources */,
 				5579ECD921B53EEE000AA4BD /* MRZTD2.swift in Sources */,
-				5579ECD721B53EEE000AA4BD /* MyScanViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
