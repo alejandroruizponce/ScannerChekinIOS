@@ -1,9 +1,9 @@
 //
 //  PassportScannerController.swift
 //
-//  Created by Edwin Vermeer on 9/7/15.
-//  Copyright (c) 2015. All rights reserved.
+//  Copyright © 2018 Alejandro Ruiz Ponce. All rights reserved.
 //
+
 
 import Foundation
 import UIKit
@@ -243,30 +243,7 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
             adaptiveThresholdFilter.blurRadiusInPixels = 8.0
         }
     }
-    /*
-    @objc func myviewTapped(_ sender: UITapGestureRecognizer) {
-        if self.showPostProcessingFilters {
-            showPostProcessingFilters = false
-            renderView2.isHidden = true
-            renderView.isHidden = false
-            print("QUITAMOS LOS FILTROS")
-            
-            
-        } else {
-            showPostProcessingFilters = true
-            renderView.isHidden = true
-            activeFilter()
 
-            camera /*--> exposure*/  --> highlightShadow  --> saturation --> contrast --> adaptiveThreshold --> renderView2
-                    // Use the same chained filters and forward these to 2 other filters
-            adaptiveThreshold --> crop --> averageColor
-
-            renderView2.isHidden = false
-            print("PONEMOS LOS FILTROS")
-            
-        }
-    }*/
-    
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         do {

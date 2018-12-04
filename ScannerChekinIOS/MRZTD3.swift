@@ -2,9 +2,9 @@
 //  MRZ.swift
 //  PassportScanner
 //
-//  Created by Edwin Vermeer on 12/5/14.
-//  Copyright (c) 2015. All rights reserved.
+//  Copyright © 2018 Alejandro Ruiz Ponce. All rights reserved.
 //
+
 
 import Foundation
 

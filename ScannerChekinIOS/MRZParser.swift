@@ -2,9 +2,9 @@
 //  MRZParser.swift
 //  PassportScanner
 //
-//  Created by Valerio Ferrantelli on 15/10/18.
-//  Copyright © 2018 evict. All rights reserved.
+//  Copyright © 2018 Alejandro Ruiz Ponce. All rights reserved.
 //
+
 
 import Foundation
 
