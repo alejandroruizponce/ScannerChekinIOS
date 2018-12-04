@@ -8,7 +8,7 @@ s.summary = "Private project from Chekin"
 s.requires_arc = true
 
 # 2
-s.version = "1.0.2"
+s.version = "1.0.3"
 
 # 3
 s.license = { :type => "MIT", :file => "LICENSE" }
@@ -35,7 +35,7 @@ s.dependency 'UIImage-Resize'
 s.source_files = "ScannerChekinIOS/**/*.{swift}"
 
 # 9
-s.resources = "ScannerChekinIOS/**/*.{png,jpeg,jpg,storyboard,xib,xcassets,traineddata}"
+# s.resources = "ScannerChekinIOS/**/*.{png,jpeg,jpg,storyboard,xib,xcassets,traineddata}"
 
 # 10
 s.swift_version = "4.2"

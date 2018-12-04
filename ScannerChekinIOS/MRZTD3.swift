@@ -64,7 +64,7 @@ open class MRZTD3: MRZParser {
                 "countryCode"     : countryCode,
                 "lastName"        : lastName,
                 "firstName"       : firstName,
-                "passportNumber"  : passportNumber,
+                "IDNumber"  : passportNumber,
                 "nationality"     : nationality,
                 "dateOfBirth"     : MRZTD3.stringFromDate(dateOfBirth),
                 "sex"             : sex,
