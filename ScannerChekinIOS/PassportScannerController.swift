@@ -1,9 +1,9 @@
 //
 //  PassportScannerController.swift
 //
-//  Copyright © 2018 Alejandro Ruiz Ponce. All rights reserved.
+//  Created by Edwin Vermeer on 9/7/15.
+//  Copyright (c) 2015. All rights reserved.
 //
-
 
 import Foundation
 import UIKit
@@ -63,6 +63,8 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
     
     var crop = Crop()
     let defaultExposure: Float = 1.5
+    var adapt: Bool = false
+    var expo: Bool = true
     
     
     //Post processing filters
@@ -92,7 +94,7 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
      */
     
     
-   override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         get { return .portrait }
     }
     /**
@@ -112,19 +114,19 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
         self.view.backgroundColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
         
         /*
-        let tapGR = UITapGestureRecognizer(target: self, action: #selector(PassportScannerController.myviewTapped(_:)))
-        tapGR.delegate = self
-        tapGR.numberOfTapsRequired = 2
-        view.addGestureRecognizer(tapGR)
-        renderView2.isHidden = true*/
+         let tapGR = UITapGestureRecognizer(target: self, action: #selector(PassportScannerController.myviewTapped(_:)))
+         tapGR.delegate = self
+         tapGR.numberOfTapsRequired = 2
+         view.addGestureRecognizer(tapGR)
+         renderView2.isHidden = true*/
         
         // Specify the crop region that will be used for the OCR
         crop.cropSizeInPixels = Size(width: 300, height: 1400)
-        crop.locationOfCropInPixels = Position(150, 250, nil)
+        crop.locationOfCropInPixels = Position(250, 250, nil)
         crop.overriddenOutputRotation = .rotateClockwise
         
         if !showPostProcessingFilters {
-            //exposureFilter.exposure = CGFloat(self.defaultExposure)
+            exposureFilter.exposure = CGFloat(self.defaultExposure)
             highlightShadowFilter.highlights = 0.8
             saturationFilter.saturation = 0.6
             contrastFilter.contrast = 2.0
@@ -196,59 +198,13 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
         self.tesseract.setVariableValue("FALSE", forKey: "wordrec_enable_assoc")
     }
     
-    func activeFilter() {
-        if self.showPostProcessingFilters {
-            // Filter settings
-            exposure = ExposureAdjustment()
-            exposure.exposure = 0.7 // -10 - 10
-            
-            highlightShadow = HighlightsAndShadows()
-            highlightShadow.highlights  = 0.6 // 0 - 1
-            
-            saturation = SaturationAdjustment();
-            saturation.saturation  = 0.6 // 0 - 2
-            
-            contrast = ContrastAdjustment();
-            contrast.contrast = 2.0  // 0 - 4
-            
-            adaptiveThreshold = AdaptiveThreshold();
-            adaptiveThreshold.blurRadiusInPixels = 8.0
-            
-            // Try to dynamically optimize the exposure based on the average color
-            averageColor = AverageColorExtractor();
-            averageColor.extractedColorCallback = { color in
-                let lighting = color.blueComponent + color.greenComponent + color.redComponent
-                let currentExposure = self.exposure.exposure
-                
-                // The stable color is between 2.75 and 2.85. Otherwise change the exposure
-                if lighting < 2.75 {
-                    self.exposure.exposure = currentExposure + (2.80 - lighting) * 2
-                }
-                
-                if lighting > 2.85 {
-                    self.exposure.exposure = currentExposure - (lighting - 2.80) * 2
-                }
-                
-                if self.exposure.exposure > 2 {
-                    self.exposure.exposure = self.defaultExposure
-                }
-                if self.exposure.exposure < -2 {
-                    self.exposure.exposure = self.defaultExposure
-                }
-            }
-        } else {
-            highlightShadowFilter.highlights = 0.8
-            saturationFilter.saturation = 0.6
-            contrastFilter.contrast = 2.0
-            adaptiveThresholdFilter.blurRadiusInPixels = 8.0
-        }
-    }
-
+    
+    
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         do {
             // Initialize the camera
-            camera = try Camera(sessionPreset: AVCaptureSession.Preset.hd1920x1080)
+            camera = try Camera(sessionPreset: AVCaptureSession.Preset.high)
             camera.location = PhysicalCameraLocation.backFacing
             
             if !showPostProcessingFilters {
@@ -298,7 +254,7 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
         }
     }
     
-    open func preprocessedImage(for tesseract: MGTesseract!, sourceImage: UIImage!) -> UIImage! {
+    open func preprocessedImage(sourceImage: UIImage!) -> UIImage! {
         // sourceImage is the same image you sent to Tesseract above.
         // Processing is already done in dynamic filters
         if showPostProcessingFilters { return sourceImage }
@@ -306,10 +262,16 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
         var filterImage: UIImage = sourceImage
         exposureFilter.exposure = self.lastExposure
         filterImage = exposureFilter.image(byFilteringImage: filterImage)
+        
         filterImage = highlightShadowFilter.image(byFilteringImage: filterImage)
         filterImage = saturationFilter.image(byFilteringImage: filterImage)
         filterImage = contrastFilter.image(byFilteringImage: filterImage)
-        filterImage = adaptiveThresholdFilter.image(byFilteringImage: filterImage)
+        if(adapt == true) {
+            print("Se ACTIVA el filtro TRESHOLD")
+            filterImage = adaptiveThresholdFilter.image(byFilteringImage: filterImage)
+        } else {
+            print("Se DESACTIVA el filtro TRESHOLD")
+        }
         self.evaluateExposure(image: filterImage)
         return filterImage
     }
@@ -333,7 +295,7 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
                 self.scanning()
             }
             self.crop --> self.pictureOutput
-
+            
         }
     }
     
@@ -371,16 +333,17 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
      */
     open func processImage(sourceImage: UIImage) -> Bool {
         // resize image. Smaller images are faster to process. When letters are too big the scan quality also goes down.
-        let croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * 0.8, height: 1400 * 0.8), scaleIfSmaller: true)
+        let croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * 0.9, height: 1400 * 0.9), scaleIfSmaller: true)
         
         // rotate image. tesseract needs the correct orientation.
         // let image: UIImage = croppedImage.rotate(by: -90)!
         // strange... this rotate will cause 1/2 the image to be skipped
         
         // Rotate cropped image
+        let processedImage = preprocessedImage(sourceImage: croppedImage)
         let selectedFilter = GPUImageTransformFilter()
         selectedFilter.setInputRotation(kGPUImageRotateLeft, at: 0)
-        let image: UIImage = selectedFilter.image(byFilteringImage: croppedImage)
+        let image: UIImage = selectedFilter.image(byFilteringImage: processedImage)
         
         // Perform the OCR scan
         let result: String = self.doOCR(image: image)
@@ -406,6 +369,12 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
         
         if  mrz.isValid() < self.accuracy {
             print("Scan quality insufficient : \(mrz.isValid())")
+            if adapt == true {
+                adapt = false
+            } else if adapt == false {
+                adapt = true
+            }
+            
         } else {
             self.camera.stopCapture()
             DispatchQueue.main.async {
