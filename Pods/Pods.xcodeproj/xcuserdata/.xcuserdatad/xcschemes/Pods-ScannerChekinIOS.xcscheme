@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CD31DFB06541FDAF1DC0CD479C0E7580"
+               BlueprintIdentifier = "A7157BF1230C364AF1DF0652F3D818F0"
                BlueprintName = "Pods-ScannerChekinIOS"
                ReferencedContainer = "container:Pods.xcodeproj"
                BuildableName = "Pods-ScannerChekinIOS.framework">

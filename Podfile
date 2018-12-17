@@ -11,7 +11,7 @@ target 'ScannerChekinIOS' do
   
   pod 'GPUImage'
   pod 'EVGPUImage2'
-  pod 'TesseractOCRSDKiOS'
+  pod 'TesseractOCRiOS', :git => 'https://github.com/gali8/Tesseract-OCR-iOS.git'
   pod 'UIImage-Resize'
 
 end

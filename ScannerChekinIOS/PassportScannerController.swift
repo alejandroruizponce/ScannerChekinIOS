@@ -11,7 +11,7 @@ import EVGPUImage2
 import GPUImage //Still using this for the rotate
 import UIImage_Resize
 import AVFoundation
-import TesseractOCRSDKiOS
+import TesseractOCR
 
 
 // based to https://www.icao.int/publications/pages/publication.aspx?docnum=9303
@@ -24,7 +24,7 @@ public enum MRZType: Int {
 }
 
 @objc(PassportScannerController)
-open class PassportScannerController: UIViewController, MGTesseractDelegate, AVCaptureMetadataOutputObjectsDelegate, UIGestureRecognizerDelegate {
+open class PassportScannerController: UIViewController, G8TesseractDelegate, AVCaptureMetadataOutputObjectsDelegate, UIGestureRecognizerDelegate {
     
     /// Set debug to true if you want to see what's happening
     @objc public var debug = false
@@ -65,6 +65,8 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
     let defaultExposure: Float = 1.5
     var adapt: Bool = false
     var expo: Bool = true
+    var mode: Int = 1
+    var filt: Int = 1
     
     
     //Post processing filters
@@ -81,7 +83,7 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
     var pictureOutput = PictureOutput()
     
     /// The tesseract OCX engine
-    var tesseract: MGTesseract = MGTesseract(language: "eng")
+    var tesseract: G8Tesseract = G8Tesseract(language: "OcrB")!
     
     
     
@@ -257,22 +259,40 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
     open func preprocessedImage(sourceImage: UIImage!) -> UIImage! {
         // sourceImage is the same image you sent to Tesseract above.
         // Processing is already done in dynamic filters
-        if showPostProcessingFilters { return sourceImage }
         
-        var filterImage: UIImage = sourceImage
-        exposureFilter.exposure = self.lastExposure
-        filterImage = exposureFilter.image(byFilteringImage: filterImage)
-        
-        filterImage = highlightShadowFilter.image(byFilteringImage: filterImage)
-        filterImage = saturationFilter.image(byFilteringImage: filterImage)
-        filterImage = contrastFilter.image(byFilteringImage: filterImage)
-        if(adapt == true) {
-            print("Se ACTIVA el filtro TRESHOLD")
-            filterImage = adaptiveThresholdFilter.image(byFilteringImage: filterImage)
+        if self.filt == 1 {
+            
+            self.filt = 2
         } else {
-            print("Se DESACTIVA el filtro TRESHOLD")
+            
+            self.filt = 1
         }
-        self.evaluateExposure(image: filterImage)
+        
+        if showPostProcessingFilters { return sourceImage }
+        var filterImage: UIImage = sourceImage
+        if filt == 1 {
+            print("MODO FILTRO 1")
+            exposureFilter.exposure = self.lastExposure
+            filterImage = exposureFilter.image(byFilteringImage: sourceImage)
+            
+            filterImage = highlightShadowFilter.image(byFilteringImage: filterImage)
+            filterImage = saturationFilter.image(byFilteringImage: filterImage)
+            filterImage = contrastFilter.image(byFilteringImage: filterImage)
+            if(adapt == true) {
+                print("Se ACTIVA el filtro TRESHOLD")
+                filterImage = adaptiveThresholdFilter.image(byFilteringImage: filterImage)
+            } else {
+                print("Se DESACTIVA el filtro TRESHOLD")
+            }
+            self.evaluateExposure(image: filterImage)
+        }
+        else {
+            print("MODO FILTRO 2")
+            filterImage = binarize(inputImage: sourceImage)
+            filterImage = noiseReduction(inputImage: filterImage)
+        }
+        
+        
         return filterImage
     }
     
@@ -286,12 +306,34 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
     private func scanning() {
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
             //print("Start OCR")
+            switch self.mode {
+            case 1:
+                self.crop.cropSizeInPixels = Size(width: 250, height: 1000)
+                self.crop.locationOfCropInPixels = Position(250, 500, nil)
+                break
+            case 2:
+                self.crop.cropSizeInPixels = Size(width: 300, height: 1000)
+                self.crop.locationOfCropInPixels = Position(500, 500, nil)
+                break
+            default:
+                break
+            }
+            
             self.pictureOutput = PictureOutput()
             self.pictureOutput.encodedImageFormat = .png
             self.pictureOutput.onlyCaptureNextFrame = true
+            
             self.pictureOutput.imageAvailableCallback = { sourceImage in
                 if self.processImage(sourceImage: sourceImage) { return }
                 // Not successful, start another scan
+                if self.mode == 1{
+                    self.mode = 2
+                } else {
+                    self.mode = 1
+                }
+                
+                
+                
                 self.scanning()
             }
             self.crop --> self.pictureOutput
@@ -396,13 +438,14 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
     open func doOCR(image: UIImage) -> String {
         // Start OCR
         var result: String?
+        
         self.tesseract.image = image
         
         print("- Start recognize")
         self.tesseract.recognize()
         result = self.tesseract.recognizedText
         //tesseract = nil
-        MGTesseract.clearCache()
+        
         print("Scan result : \(result ?? "")")
         return result ?? ""
     }
@@ -412,6 +455,31 @@ open class PassportScannerController: UIViewController, MGTesseractDelegate, AVC
      
      :param: mrz The MRZ result
      */
+    
+    func binarize(inputImage:UIImage) -> UIImage {
+        let imageRef = inputImage.cgImage
+        let context =  CIContext(options: nil)//[CIContext contextWithOptions:nil]; // 1
+        let ciImage = CIImage(cgImage: imageRef!) //[CIImage imageWithCGImage:imageRef]; // 2
+        let filter = CIFilter(name: "CIColorMonochrome", parameters: ["inputImage" : ciImage,"inputColor":CIColor.init(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0),"inputIntensity":1])
+        let ciExit = filter?.value(forKey: kCIOutputImageKey) as! CIImage
+        
+        let cgImg = context.createCGImage(ciExit, from: ciExit.extent)!
+        
+        return UIImage(cgImage: cgImg)
+    }
+    
+    func noiseReduction(inputImage:UIImage) -> UIImage {
+        let imageRef = inputImage.cgImage
+        let context =  CIContext(options: nil)//[CIContext contextWithOptions:nil]; // 1
+        let ciImage = CIImage(cgImage: imageRef!) //[CIImage imageWithCGImage:imageRef]; // 2
+        let filter = CIFilter(name: "CINoiseReduction", parameters: ["inputImage" : ciImage,"inputNoiseLevel":0.04,"inputSharpness":0.40])
+        let ciExit = filter?.value(forKey: kCIOutputImageKey) as! CIImage
+        
+        let cgImg = context.createCGImage(ciExit, from: ciExit.extent)!
+        
+        return UIImage(cgImage: cgImg)
+    }
+    
     open func successfulScan(mrz: MRZParser) {
         if(self.scannerDidCompleteWith != nil){
             self.scannerDidCompleteWith!(mrz)
