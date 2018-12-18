@@ -8,7 +8,7 @@ s.summary = "Private project from Chekin"
 s.requires_arc = true
 
 # 2
-s.version = "1.0.7"
+s.version = "1.0.8"
 
 # 3
 s.license = { :type => "MIT", :file => "LICENSE" }
@@ -27,7 +27,7 @@ s.source = { :git => "https://github.com/alejandroruizponce/ScannerChekinIOS.git
 s.framework = "UIKit"
 s.dependency 'EVGPUImage2'
 s.dependency 'GPUImage'
-s.dependency 'TesseractOCR'
+s.dependency 'TesseractOCRiOS'
 s.dependency 'UIImage-Resize'
 
 

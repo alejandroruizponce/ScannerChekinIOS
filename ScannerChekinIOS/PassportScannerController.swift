@@ -388,7 +388,33 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
         let image: UIImage = selectedFilter.image(byFilteringImage: processedImage)
         
         // Perform the OCR scan
-        let result: String = self.doOCR(image: image)
+        let resultRAW: String = self.doOCR(image: image)
+        var lines = resultRAW.components(separatedBy: "\n")
+        
+        print("\(lines.count) LINEAS VALIDAS:")
+        for i in 0...lines.count-1 {
+            if lines[i].characters.contains("<"){
+                print("Linea \(i): \(lines[i])")
+                var words = lines[i].components(separatedBy: CharacterSet.whitespaces)
+                lines[i] = ""
+                for j in 0...words.count-1{
+                    if words[j].characters.contains("<"){
+                        print("NOS QUEDAMOS LA PALABRA: \(words[j])")
+                        lines[i] = words[j]
+                    }
+                }
+            } else {
+                lines[i] = ""
+            }
+        }
+        var result = ""
+        for i in 0...lines.count-1 {
+            if lines[i] != "" {
+                result = result + lines[i] + "\n"
+            }
+        }
+        
+        print("TESSERACT LEE ESTO: \(lines[0])")
         
         // Create the MRZ object and validate if it's OK
         var mrz: MRZParser
@@ -523,6 +549,12 @@ extension UIImage {
             let drawRect = CGRect(origin: CGPoint(x: -self.size.width/2, y: -self.size.height/2), size: self.size)
             renderContext.cgContext.draw(cgImage, in: drawRect)
         }
+    }
+}
+
+extension String {
+    var lines: [String] {
+        return self.components(separatedBy: "\n")
     }
 }
 
