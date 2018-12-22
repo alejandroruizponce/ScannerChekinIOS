@@ -12,6 +12,7 @@ import GPUImage //Still using this for the rotate
 import UIImage_Resize
 import AVFoundation
 import TesseractOCR
+import CoreMotion
 
 
 // based to https://www.icao.int/publications/pages/publication.aspx?docnum=9303
@@ -67,6 +68,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
     var expo: Bool = true
     var mode: Int = 1
     var filt: Int = 1
+    
     
     
     //Post processing filters
@@ -172,6 +174,8 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                     self.exposure.exposure = self.defaultExposure
                 }
             }
+            
+            
         }
         
         
@@ -224,6 +228,11 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
         }
     }
     
+    
+    
+    
+    
+    
     func evaluateExposure(image: UIImage){
         if !self.enableAdaptativeExposure || self.averageColorFilter != nil {
             return
@@ -265,7 +274,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
             self.filt = 2
         } else {
             
-            self.filt = 1
+            self.filt = 2
         }
         
         if showPostProcessingFilters { return sourceImage }
@@ -304,37 +313,71 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
     }
     
     private func scanning() {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.2) {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             //print("Start OCR")
+            
             switch self.mode {
+                //En horizontal
+                
             case 1:
-                self.crop.cropSizeInPixels = Size(width: 250, height: 1000)
-                self.crop.locationOfCropInPixels = Position(250, 500, nil)
+                self.crop.cropSizeInPixels = Size(width: 250, height: 1500)
+                self.crop.locationOfCropInPixels = Position(150, 250, nil)
                 break
             case 2:
-                self.crop.cropSizeInPixels = Size(width: 300, height: 1000)
-                self.crop.locationOfCropInPixels = Position(500, 500, nil)
+                self.crop.cropSizeInPixels = Size(width: 250, height: 1500)
+                self.crop.locationOfCropInPixels = Position(400, 250, nil)
+                break
+            case 3:
+                self.crop.cropSizeInPixels = Size(width: 250, height: 1500)
+                self.crop.locationOfCropInPixels = Position(630, 250, nil)
+                break
+            //En vertical
+            case 4:
+                self.crop.cropSizeInPixels = Size(width: 750, height: 600)
+                self.crop.locationOfCropInPixels = Position(150, 250, nil)
+                break
+            case 5:
+                self.crop.cropSizeInPixels = Size(width: 750, height: 600)
+                self.crop.locationOfCropInPixels = Position(150, 650, nil)
+                break
+            case 6:
+                self.crop.cropSizeInPixels = Size(width: 750, height: 600)
+                self.crop.locationOfCropInPixels = Position(150, 1150, nil)
                 break
             default:
                 break
             }
+            
             
             self.pictureOutput = PictureOutput()
             self.pictureOutput.encodedImageFormat = .png
             self.pictureOutput.onlyCaptureNextFrame = true
             
             self.pictureOutput.imageAvailableCallback = { sourceImage in
-                if self.processImage(sourceImage: sourceImage) { return }
-                // Not successful, start another scan
-                if self.mode == 1{
-                    self.mode = 2
-                } else {
-                    self.mode = 1
+                DispatchQueue.global().async() {
+                    if self.processImage(sourceImage: sourceImage) { return }
+                    // Not successful, start another scan
+                    
+                    if self.mode == 1{
+                        self.mode = 2
+                    } else if self.mode == 2 {
+                        self.mode = 3
+                    } else if self.mode == 3 {
+                        self.mode = 4
+                    } else if self.mode == 4 {
+                        self.mode = 5
+                    } else if self.mode == 5 {
+                        self.mode = 6
+                    } else if self.mode == 6 {
+                        self.mode = 1
+                    }
+                    
+                    
+                    
+                    
+                    
+                    self.scanning()
                 }
-                
-                
-                
-                self.scanning()
             }
             self.crop --> self.pictureOutput
             
@@ -375,20 +418,30 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
      */
     open func processImage(sourceImage: UIImage) -> Bool {
         // resize image. Smaller images are faster to process. When letters are too big the scan quality also goes down.
-        let croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * 0.9, height: 1400 * 0.9), scaleIfSmaller: true)
+        var multiplier = 0.0
+        if self.mode != 4 && self.mode != 5 && self.mode != 6 {
+            multiplier = 0.9
+        } else {
+            multiplier = 1.4
+        }
+        var croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * multiplier, height: 1400 * multiplier), scaleIfSmaller: true)
+        
+        var processedImage = preprocessedImage(sourceImage: croppedImage)
         
         // rotate image. tesseract needs the correct orientation.
         // let image: UIImage = croppedImage.rotate(by: -90)!
         // strange... this rotate will cause 1/2 the image to be skipped
         
-        // Rotate cropped image
-        let processedImage = preprocessedImage(sourceImage: croppedImage)
-        let selectedFilter = GPUImageTransformFilter()
-        selectedFilter.setInputRotation(kGPUImageRotateLeft, at: 0)
-        let image: UIImage = selectedFilter.image(byFilteringImage: processedImage)
+        
+        if self.mode != 4 && self.mode != 5 && self.mode != 6 {
+            // Rotate cropped image
+            let selectedFilter = GPUImageTransformFilter()
+            selectedFilter.setInputRotation(kGPUImageRotateLeft, at: 0)
+            processedImage = selectedFilter.image(byFilteringImage: processedImage)
+        }
         
         // Perform the OCR scan
-        let resultRAW: String = self.doOCR(image: image)
+        let resultRAW: String = self.doOCR(image: processedImage!)
         var lines = resultRAW.components(separatedBy: "\n")
         
         print("\(lines.count) LINEAS VALIDAS:")
@@ -399,7 +452,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                 lines[i] = ""
                 for j in 0...words.count-1{
                     if words[j].characters.contains("<"){
-                        print("NOS QUEDAMOS LA PALABRA: \(words[j])")
+                        print("NOS QUEDAMOS LA PALABRA:                               \(words[j])")
                         lines[i] = words[j]
                     }
                 }

@@ -8,7 +8,7 @@ s.summary = "Private project from Chekin"
 s.requires_arc = true
 
 # 2
-s.version = "1.0.8"
+s.version = "1.0.9"
 
 # 3
 s.license = { :type => "MIT", :file => "LICENSE" }
