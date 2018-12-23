@@ -269,13 +269,6 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
         // sourceImage is the same image you sent to Tesseract above.
         // Processing is already done in dynamic filters
         
-        if self.filt == 1 {
-            
-            self.filt = 2
-        } else {
-            
-            self.filt = 2
-        }
         
         if showPostProcessingFilters { return sourceImage }
         var filterImage: UIImage = sourceImage
@@ -301,6 +294,9 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
             filterImage = noiseReduction(inputImage: filterImage)
         }
         
+        self.filt = self.filt + 1
+        
+        
         
         return filterImage
     }
@@ -315,21 +311,20 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
     private func scanning() {
         DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             //print("Start OCR")
-            
             switch self.mode {
                 //En horizontal
                 
             case 1:
-                self.crop.cropSizeInPixels = Size(width: 250, height: 1500)
+                self.crop.cropSizeInPixels = Size(width: 350, height: 1500)
                 self.crop.locationOfCropInPixels = Position(150, 250, nil)
                 break
             case 2:
-                self.crop.cropSizeInPixels = Size(width: 250, height: 1500)
-                self.crop.locationOfCropInPixels = Position(400, 250, nil)
+                self.crop.cropSizeInPixels = Size(width: 350, height: 1500)
+                self.crop.locationOfCropInPixels = Position(350, 250, nil)
                 break
             case 3:
-                self.crop.cropSizeInPixels = Size(width: 250, height: 1500)
-                self.crop.locationOfCropInPixels = Position(630, 250, nil)
+                self.crop.cropSizeInPixels = Size(width: 350, height: 1500)
+                self.crop.locationOfCropInPixels = Position(550, 250, nil)
                 break
             //En vertical
             case 4:
@@ -358,17 +353,23 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                     if self.processImage(sourceImage: sourceImage) { return }
                     // Not successful, start another scan
                     
-                    if self.mode == 1{
+                    if self.mode == 1 && self.filt == 3{
+                        self.filt = 1
                         self.mode = 2
-                    } else if self.mode == 2 {
+                    } else if self.mode == 2 && self.filt == 3 {
+                        self.filt = 1
                         self.mode = 3
-                    } else if self.mode == 3 {
+                    } else if self.mode == 3 && self.filt == 3 {
+                        self.filt = 1
                         self.mode = 4
-                    } else if self.mode == 4 {
+                    } else if self.mode == 4 && self.filt == 3 {
+                        self.filt = 1
                         self.mode = 5
-                    } else if self.mode == 5 {
+                    } else if self.mode == 5 && self.filt == 3 {
+                        self.filt = 1
                         self.mode = 6
-                    } else if self.mode == 6 {
+                    } else if self.mode == 6 && self.filt == 3 {
+                        self.filt = 1
                         self.mode = 1
                     }
                     
@@ -418,13 +419,16 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
      */
     open func processImage(sourceImage: UIImage) -> Bool {
         // resize image. Smaller images are faster to process. When letters are too big the scan quality also goes down.
-        var multiplier = 0.0
+        var multiplierW = 0.0
+        var multiplierH = 0.0
         if self.mode != 4 && self.mode != 5 && self.mode != 6 {
-            multiplier = 0.9
+            multiplierW = 0.9
+            multiplierH = 0.9
         } else {
-            multiplier = 1.4
+            multiplierW = 2.5
+            multiplierH = 1
         }
-        var croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * multiplier, height: 1400 * multiplier), scaleIfSmaller: true)
+        var croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * multiplierW, height: 1400 * multiplierH), scaleIfSmaller: true)
         
         var processedImage = preprocessedImage(sourceImage: croppedImage)
         
@@ -452,7 +456,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                 lines[i] = ""
                 for j in 0...words.count-1{
                     if words[j].characters.contains("<"){
-                        print("NOS QUEDAMOS LA PALABRA:                               \(words[j])")
+                        print("NOS QUEDAMOS LA PALABRA: \(words[j])")
                         lines[i] = words[j]
                     }
                 }
