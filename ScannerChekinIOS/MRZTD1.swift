@@ -168,6 +168,10 @@ open class MRZTD1: MRZParser {
         
         // Line 1 parsing
         documentType = line1.subString(0, to: 0)
+        //Italian Case
+        if documentType == "C" {
+            documentType = "I"
+        }
         debugLog("Document type : \(documentType)")
         documentSubType = line1.subString(1, to: 1)
         if documentSubType == "<" || documentSubType == "O" || documentSubType == "0"{
@@ -244,7 +248,7 @@ open class MRZTD1: MRZParser {
         firstName = firstName.replace(target: "2", with: "Z")
         firstName = firstName.replace(target: "8", with: "B")
         debugLog("First name : \(firstName)")
-
+        
         validation(passportN: passportNumber, passportNC: passportNumberCheck, birth: birth, birthC: birthValidation, expiration: expiration, expirationC: expirationValidation, data: data, dataC: dataValidation)
         
         
@@ -252,14 +256,14 @@ open class MRZTD1: MRZParser {
         // Final cleaning up
         documentSubType = documentSubType.replace(target: "<", with: "")
         passportNumber = passportNumber.replace(target: "<", with: "")
-
+        
     }
     
     func validation(passportN: String, passportNC: String, birth: String, birthC: String, expiration: String, expirationC: String, data: String, dataC: String){
         // Validation
         
         _isValid = 1
-
+        
         if countryCode != "ESP" && countryCode != "BEL" && countryCode != "PRT"{
             passportNumberIsValid = MRZTD1.validate(passportN, check: passportNC)
             if !passportNumberIsValid {
@@ -267,16 +271,16 @@ open class MRZTD1: MRZParser {
             }
             _isValid = _isValid * (passportNumberIsValid ? 1 : 0.9)
         }
-
+        
         dateOfBirthIsValid = MRZTD1.validate(birth, check: birthC)
         if !dateOfBirthIsValid {
             print("--> DateOfBirth is invalid")
         }
         _isValid = _isValid * (dateOfBirthIsValid ? 1 : 0.9)
-  
+        
         _isValid = _isValid * (MRZTD1.validate(expiration, check: expirationC) ? 1 : 0.9)
-    
-
+        
+        
         dataIsValid = MRZTD1.validate(data, check: dataC)
         if !dataIsValid {
             print("--> Date is invalid")

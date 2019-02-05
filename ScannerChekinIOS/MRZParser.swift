@@ -37,8 +37,8 @@ open class MRZParser : NSObject{
     class func dateFromString(_ value: String) -> Date? {
         var date: Date?
         let dateStringFormatter = DateFormatter()
-        dateStringFormatter.dateFormat = "YYMMdd"
-        dateStringFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateStringFormatter.dateFormat = "YYYYMMdd"
+        dateStringFormatter.locale = Locale(identifier: "es_ES")
         let d = dateStringFormatter.date(from: value)
         if d != nil {
             date = Date(timeInterval:0, since:d!)
@@ -58,8 +58,8 @@ open class MRZParser : NSObject{
             return ""
         }
         let formatter = DateFormatter()
-        formatter.dateFormat = "YYMMdd"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "YYYYMMdd"
+        formatter.locale = Locale(identifier: "es_ES")
         return formatter.string(from: value!)
     }
     
