@@ -186,7 +186,7 @@ open class MRZTD3: MRZParser {
         } else {
             passportNumber = line2.subString(0, to: 1) + line2.subString(2, to: 8).toNumber()
         }
-
+        
         debugLog("passportNumber : \(passportNumber)")
         let passportNumberCheck = line2.subString(9, to: 9).toNumber()
         nationality = line2.subString(10, to: 12).replace(target: "<", with: " ")
@@ -201,13 +201,14 @@ open class MRZTD3: MRZParser {
         nationality = nationality.replace(target: "8", with: "B")
         debugLog("nationality : \(nationality)")
         let birth = line2.subString(13, to: 18).toNumber()
+        print("birth pre-convert: \(birth)")
         let birthValidation = line2.subString(19, to: 19).toNumber()
-        dateOfBirth = MRZTD3.dateFromString(birth)
+        dateOfBirth = MRZTD3.birthDateFromString(birth)
         debugLog("date of birth : \(dateOfBirth)")
         sex = line2.subString(20, to: 20)
         debugLog("sex : \(sex)")
         let expiration = line2.subString(21, to: 26).toNumber()
-        expirationDate = MRZTD3.dateFromString(expiration)
+        expirationDate = MRZTD3.expirationDateFromString(expiration)
         debugLog("date of expiration : \(expirationDate)")
         let expirationValidation = line2.subString(27, to: 27).toNumber()
         personalNumber =  line2.subString(28, to: 41).toNumber()

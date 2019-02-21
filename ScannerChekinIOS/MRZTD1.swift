@@ -199,14 +199,14 @@ open class MRZTD1: MRZParser {
         
         let birth = line2.subString(0, to: 5).toNumber()
         let birthValidation = line2.subString(6, to: 6).toNumber()
-        dateOfBirth = MRZTD1.dateFromString(birth)
+        dateOfBirth = MRZTD1.birthDateFromString(birth)
         debugLog("date of birth : \(dateOfBirth)")
         
         sex = line2.subString(7, to: 7)
         debugLog("sex : \(sex)")
         
         let expiration = line2.subString(8, to: 13).toNumber()
-        expirationDate = MRZTD1.dateFromString(expiration)
+        expirationDate = MRZTD1.expirationDateFromString(expiration)
         debugLog("date of expiration : \(expirationDate)")
         let expirationValidation = line2.subString(14, to: 14).toNumber()
         

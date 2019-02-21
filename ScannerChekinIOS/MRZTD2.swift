@@ -164,7 +164,7 @@ open class MRZTD2: MRZParser {
                 lastName = line2.subString(13, to: 26).replace(target: "<", with: " ")
                 debugLog("Last name : \(lastName)")
                 let birth = line2.subString(27, to: 32).toNumber()
-                dateOfBirth = MRZTD2.dateFromString(birth)
+                dateOfBirth = MRZTD2.birthDateFromString(birth)
                 debugLog("date of birth : \(dateOfBirth)")
                 let birthValidation = line2.subString(33, to: 33).toNumber()
                 sex = line2.subString(34, to: 34)
@@ -218,7 +218,7 @@ open class MRZTD2: MRZParser {
                 debugLog("Nationality : \(passportNumber)")
                 
                 let birth = line2.subString(13, to: 18).toNumber()
-                dateOfBirth = MRZTD2.dateFromString(birth)
+                dateOfBirth = MRZTD2.birthDateFromString(birth)
                 debugLog("date of birth : \(dateOfBirth)")
                 let birthValidation = line2.subString(19, to: 19).toNumber()
                 
@@ -226,7 +226,7 @@ open class MRZTD2: MRZParser {
                 debugLog("sex : \(sex)")
                 
                 let expiration = line2.subString(21, to: 26).toNumber()
-                expirationDate = MRZTD1.dateFromString(expiration)
+                expirationDate = MRZTD1.expirationDateFromString(expiration)
                 debugLog("date of expiration : \(expirationDate)")
                 let expirationValidation = line2.subString(27, to: 27).toNumber()
                 

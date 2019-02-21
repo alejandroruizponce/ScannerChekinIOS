@@ -12,7 +12,7 @@ import Foundation
 open class MRZParser : NSObject{
     
     @objc public var parsedMRZ: String = ""
-
+    
     
     @objc public init(scan: String, debug: Bool = false) {
         super.init()
@@ -24,7 +24,7 @@ open class MRZParser : NSObject{
     
     // A dictionary with mrz parsed fields
     @objc public func data() -> Dictionary<String, Any> {return Dictionary.init()}
-
+    
     
     
     /**
@@ -34,16 +34,55 @@ open class MRZParser : NSObject{
      
      :returns: Returns the date value for the string
      */
-    class func dateFromString(_ value: String) -> Date? {
+    class func birthDateFromString(_ value: String) -> Date? {
         var date: Date?
         let dateStringFormatter = DateFormatter()
-        dateStringFormatter.dateFormat = "YYYYMMdd"
+        dateStringFormatter.dateFormat = "yyyyMMdd"
+        dateStringFormatter.locale = Locale(identifier: "es_ES")
+        let d = dateStringFormatter.date(from: value)
+        if d != nil {
+            date = Date(timeInterval:0, since:d!)
+            
+            print("EMPIEZA LA CONVERSION DE FECHA FINAL")
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy"
+            if let year = Int(dateFormatter.string(from: date!)) {
+                print("El año convertido es: \(year)")
+                let currentDate = Date()
+                let format = DateFormatter()
+                format.dateFormat = "yyyy"
+                let calendar = Calendar.current
+                let currentYear = Int(calendar.component(.year, from: currentDate))
+                print("El año actual es: \(currentYear)")
+                
+                if year > currentYear {
+                    let dateString = stringFromDate(date)
+                    let finalValue = dateString.replace(target: String(year), with: String(year - 100))
+                    print("El valor final es: \(finalValue)")
+                    let finalDate = dateStringFormatter.date(from: finalValue)
+                    print("La fecha final es: \(finalDate)")
+                    
+                    date = finalDate
+                }
+            }
+        }
+        return date
+    }
+    
+    class func expirationDateFromString(_ value: String) -> Date? {
+        var date: Date?
+        let dateStringFormatter = DateFormatter()
+        dateStringFormatter.dateFormat = "yyyyMMdd"
         dateStringFormatter.locale = Locale(identifier: "es_ES")
         let d = dateStringFormatter.date(from: value)
         if d != nil {
             date = Date(timeInterval:0, since:d!)
         }
+        
         return date
+        
+        
     }
     
     /**
@@ -58,7 +97,7 @@ open class MRZParser : NSObject{
             return ""
         }
         let formatter = DateFormatter()
-        formatter.dateFormat = "YYYYMMdd"
+        formatter.dateFormat = "yyyyMMdd"
         formatter.locale = Locale(identifier: "es_ES")
         return formatter.string(from: value!)
     }
