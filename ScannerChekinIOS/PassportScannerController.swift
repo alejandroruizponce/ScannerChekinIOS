@@ -68,6 +68,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
     var expo: Bool = true
     var mode: Int = 1
     var filt: Int = 1
+    var deb: Int = 0
     
     
     
@@ -202,12 +203,21 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
         self.tesseract.setVariableValue("FALSE", forKey: "load_fixed_length_dawgs")
         self.tesseract.setVariableValue("FALSE", forKey: "load_bigram_dawg")
         self.tesseract.setVariableValue("FALSE", forKey: "wordrec_enable_assoc")
+        
+        
+        
+        
+        
+        
     }
     
     
     
     open override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        
+        
         do {
             // Initialize the camera
             camera = try Camera(sessionPreset: AVCaptureSession.Preset.high)
@@ -226,6 +236,8 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
         } catch {
             fatalError("Could not initialize rendering pipeline: \(error)")
         }
+        
+        
     }
     
     
@@ -272,7 +284,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
         
         if showPostProcessingFilters { return sourceImage }
         var filterImage: UIImage = sourceImage
-        if filt == 1 {
+        if filt == 1 || filt == 3{
             print("MODO FILTRO 1")
             exposureFilter.exposure = self.lastExposure
             filterImage = exposureFilter.image(byFilteringImage: sourceImage)
@@ -288,7 +300,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
             }
             self.evaluateExposure(image: filterImage)
         }
-        else {
+        else if filt == 2 || filt == 4 {
             print("MODO FILTRO 2")
             filterImage = binarize(inputImage: sourceImage)
             filterImage = noiseReduction(inputImage: filterImage)
@@ -353,13 +365,13 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                     if self.processImage(sourceImage: sourceImage) { return }
                     // Not successful, start another scan
                     
-                    if self.mode == 1 && self.filt == 3{
+                    if self.mode == 1 && self.filt == 5{
                         self.filt = 1
                         self.mode = 2
-                    } else if self.mode == 2 && self.filt == 3 {
+                    } else if self.mode == 2 && self.filt == 5 {
                         self.filt = 1
                         self.mode = 3
-                    } else if self.mode == 3 && self.filt == 3 {
+                    } else if self.mode == 3 && self.filt == 5 {
                         self.filt = 1
                         self.mode = 4
                     } else if self.mode == 4 && self.filt == 3 {
@@ -372,9 +384,6 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                         self.filt = 1
                         self.mode = 1
                     }
-                    
-                    
-                    
                     
                     
                     self.scanning()
@@ -428,21 +437,31 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
             multiplierW = 2.5
             multiplierH = 1
         }
-        var croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * multiplierW, height: 1400 * multiplierH), scaleIfSmaller: true)
+        
+        let croppedImage: UIImage = sourceImage.resizedImageToFit(in: CGSize(width: 300 * multiplierW, height: 1400 * multiplierH), scaleIfSmaller: true)
         
         var processedImage = preprocessedImage(sourceImage: croppedImage)
+        
+        
+        if self.mode != 4 && self.mode != 5 && self.mode != 6 {
+            if filt == 2 || filt == 3 {
+                let selectedFilterLeft = GPUImageTransformFilter()
+                selectedFilterLeft.setInputRotation(kGPUImageRotateLeft, at: 0)
+                processedImage = selectedFilterLeft.image(byFilteringImage: processedImage)
+            }
+            else {
+                let selectedFilterRight = GPUImageTransformFilter()
+                selectedFilterRight.setInputRotation(kGPUImageRotateRight, at: 0)
+                processedImage = selectedFilterRight.image(byFilteringImage: processedImage)
+            }
+        }
         
         // rotate image. tesseract needs the correct orientation.
         // let image: UIImage = croppedImage.rotate(by: -90)!
         // strange... this rotate will cause 1/2 the image to be skipped
         
         
-        if self.mode != 4 && self.mode != 5 && self.mode != 6 {
-            // Rotate cropped image
-            let selectedFilter = GPUImageTransformFilter()
-            selectedFilter.setInputRotation(kGPUImageRotateLeft, at: 0)
-            processedImage = selectedFilter.image(byFilteringImage: processedImage)
-        }
+        
         
         // Perform the OCR scan
         let resultRAW: String = self.doOCR(image: processedImage!)
