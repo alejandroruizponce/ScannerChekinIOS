@@ -357,7 +357,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
             
             
             self.pictureOutput = PictureOutput()
-            self.pictureOutput.encodedImageFormat = .png
+            self.pictureOutput.encodedImageFormat = .jpeg
             self.pictureOutput.onlyCaptureNextFrame = true
             
             self.pictureOutput.imageAvailableCallback = { sourceImage in
@@ -384,6 +384,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                         self.filt = 1
                         self.mode = 1
                     }
+                    
                     
                     
                     self.scanning()

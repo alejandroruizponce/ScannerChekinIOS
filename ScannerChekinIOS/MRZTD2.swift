@@ -189,11 +189,12 @@ open class MRZTD2: MRZParser {
                 }
                 _isValid = _isValid * (dateOfBirthIsValid ? 1 : 0.9)
                 
-                dataIsValid = MRZTD3.validate(data, check: dataValidation)
-                if !dataIsValid {
-                    print("--> Date is invalid")
-                }
-                _isValid = _isValid * (dataIsValid ? 1 : 0.9)
+                /*
+                 dataIsValid = MRZTD3.validate(data, check: dataValidation)
+                 if !dataIsValid {
+                 print("--> Data is invalid")
+                 }
+                 _isValid = _isValid * (dataIsValid ? 1 : 0.9)*/
                 
                 
             } else  {
