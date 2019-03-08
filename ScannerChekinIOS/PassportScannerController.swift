@@ -321,11 +321,10 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
     }
     
     private func scanning() {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.1) {
             //print("Start OCR")
             switch self.mode {
-                //En horizontal
                 
+            //Landscape Orientation
             case 1:
                 self.crop.cropSizeInPixels = Size(width: 350, height: 1500)
                 self.crop.locationOfCropInPixels = Position(150, 250, nil)
@@ -338,7 +337,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                 self.crop.cropSizeInPixels = Size(width: 350, height: 1500)
                 self.crop.locationOfCropInPixels = Position(550, 250, nil)
                 break
-            //En vertical
+            //Portrait Orientation
             case 4:
                 self.crop.cropSizeInPixels = Size(width: 750, height: 600)
                 self.crop.locationOfCropInPixels = Position(150, 250, nil)
@@ -391,8 +390,7 @@ open class PassportScannerController: UIViewController, G8TesseractDelegate, AVC
                 }
             }
             self.crop --> self.pictureOutput
-            
-        }
+
     }
     
     @objc public func stopScan() {
